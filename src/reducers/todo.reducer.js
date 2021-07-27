@@ -1,58 +1,67 @@
 import {
-    ADD_TODO,
-    INIT_TODOS,
-    REMOVE_TODO,
-    TOGGLE_TODO,
+  ADD_TODO,
+  LOAD_TODOS,
+  SAVE_TODOS,
+  REMOVE_TODO,
+  TOGGLE_TODO,
 } from '../actions/todo.action';
+import { getTodos, setTodos } from '../repositories/todo.repository';
 
 const initialState = {
-    todos: [],
+  todos: [],
 };
 
-const todoReducer = (state= initialState, action) => {
-    switch (action.type)  {
-        case INIT_TODOS:
-            return {
-                ...state,
-                todos: action.todos,
-            };
+const todoReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case LOAD_TODOS:
+      return {
+        ...state,
+        todos: getTodos(),
+      };
 
-        case ADD_TODO:
-            return {
-                ...state,
-                todos: [
-                    ...state.todos,
-                    {
-                        title: action.title,
-                        isFinished: false,
-                    },
-                ]
-            };
+    case SAVE_TODOS:
+      setTodos(state.todos);
+      return state;
 
-        case REMOVE_TODO:
-            return {
-                ...state,
-                todos: [
-                    ...state.todos.slice(0, action.index),
-                    ...state.todos.slice(action.index + 1),
-                ],
-            };
+    case ADD_TODO:
+      return {
+        ...state,
+        todos: [
+          ...state.todos,
+          {
+            title: action.title,
+            isFinished: false,
+          },
+        ],
+      };
 
-        case TOGGLE_TODO:
-            return {
-                ...state,
-                todos: state.todos.map((todo, i) => {
-                    if (i === action.index) {
-                        todo.isFinished = !todo.isFinished;
-                    }
+    case REMOVE_TODO:
+      return {
+        ...state,
+        todos: [
+          ...state.todos.slice(0, action.index),
+          ...state.todos.slice(action.index + 1),
+        ],
+      };
 
-                    return todo;
-                }),
-            };
+    case TOGGLE_TODO:
+      return {
+        ...state,
+        todos: [...state.todos].map((todo, index) => {
+          if (index !== action.index) {
+            return todo;
+          }
 
-        default:
-            return state;
-    }
+          return {
+            ...todo,
+            isFinished: !todo.isFinished,
+          };
+        }),
+      };
+
+    default:
+      return state;
+  }
 };
 
 export default todoReducer;

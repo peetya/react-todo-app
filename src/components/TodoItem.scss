@@ -1,0 +1,13 @@
+.todo-item {
+  span.badge {
+    display: none;
+    float: right;
+  }
+
+  &:hover {
+    span.badge {
+      cursor: pointer;
+      display: inline-block;
+    }
+  }
+}
